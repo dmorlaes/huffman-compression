@@ -90,26 +90,6 @@ public class HuffProcessor {
 
 	}
 
-	private void codingHelper(HuffNode hn, String[] encodings, String guy) {
-		if (hn.myRight == null && hn.myLeft == null) {
-			encodings[hn.myValue] = guy;
-			return;
-		}
-		codingHelper(hn.myLeft, encodings, guy + "0");
-		codingHelper(hn.myRight, encodings, guy + "1");
-	}
-
-	private void writeHeader(HuffNode hn, BitOutputStream out) {
-		if (hn.myRight != null || hn.myLeft != null) {
-			out.writeBits(1, 0);
-			writeHeader(hn.myLeft, out);
-			writeHeader(hn.myRight, out);
-		}
-		else {
-			out.writeBits(1, 1);
-			out.writeBits(1 + BITS_PER_WORD, hn.myValue);
-		}
-	}
 	/**
 	 * Decompresses a file. Output file must be identical bit-by-bit to the
 	 * original.
@@ -155,6 +135,29 @@ public class HuffProcessor {
 			}
 		}
 	out.close();
+	}
+
+
+
+	private void writeHeader(HuffNode hn, BitOutputStream out) {
+		if (hn.myRight != null || hn.myLeft != null) {
+			out.writeBits(1, 0);
+			writeHeader(hn.myLeft, out);
+			writeHeader(hn.myRight, out);
+		}
+		else {
+			out.writeBits(1, 1);
+			out.writeBits(1 + BITS_PER_WORD, hn.myValue);
+		}
+	}
+
+	private void codingHelper(HuffNode hn, String[] encodings, String guy) {
+		if (hn.myRight == null && hn.myLeft == null) {
+			encodings[hn.myValue] = guy;
+			return;
+		}
+		codingHelper(hn.myLeft, encodings, guy + "0");
+		codingHelper(hn.myRight, encodings, guy + "1");
 	}
 
 	private HuffNode readTree(BitInputStream in) {
