@@ -157,7 +157,7 @@ public class HuffProcessor {
 	out.close();
 	}
 
-	public HuffNode readTree(BitInputStream in) {
+	private HuffNode readTree(BitInputStream in) {
 		int bits = in.readBits(1);
 
 		if (bits == -1) {
